@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Extensions.Logging.Abstractions;
 using Tomlyn;
 using HarmonyLib;
+using UnityEngine;
 
 namespace TSEspionage
 {
     public static class InitEspionage
     {
-        public static void init()
+        public static void Init()
         {
             // Read the config file
             var configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -26,11 +26,9 @@ namespace TSEspionage
 
             var espionageConfig = Toml.ToModel<EspionageConfig>(File.ReadAllText(configPath));
 
-            // Create the patch classes
-            var logWriter = new GameLogWriter(espionageConfig);
-
-            GameLogPatch.gameLogWriter = logWriter;
-            GameLogPatch.log = new NullLogger<GameLogPatch>();
+            // Initialize the patch classes
+            GameLogPatches.Init(espionageConfig, Debug.unityLogger);
+            AnimateObjectPatches.Init();
 
             // Patch the TS assembly
             var harmony = new Harmony("com.example.patch");

@@ -11,4 +11,8 @@
     <ItemGroup>
       <ProjectReference Include="..\TSEspionage\TSEspionage.csproj" />
     </ItemGroup>
+
+    <Target Name="PostPublish" AfterTargets="Publish">
+      <Exec Command="powershell Compress-Archive -Path '$(PublishDir)*.dll', 'resources\windows\*' -DestinationPath '$(PublishDir)TSEspionage-windows.zip' -Force" />
+    </Target>
 </Project>

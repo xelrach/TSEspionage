@@ -2,11 +2,11 @@
 
 namespace Doorstop
 {
-    public static class Entrypoint
+    class Entrypoint
     {
         public static void Start()
         {
-            InitEspionage.init();
+            InitEspionage.Init();
         }
     }
 }

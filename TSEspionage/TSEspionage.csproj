@@ -5,21 +5,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-      <PackageReference Include="Tomlyn" Version="0.15.0" />
+        <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+        <PackageReference Include="Tomlyn" Version="0.15.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Assembly-CSharp">
-        <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Assembly-CSharp.dll</HintPath>
-      </Reference>
-      <Reference Include="Unity.TextMeshPro">
-        <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-      </Reference>
-      <Reference Include="UnityEngine.CoreModule">
-        <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      </Reference>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Assembly-CSharp.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
     </ItemGroup>
 
 </Project>
