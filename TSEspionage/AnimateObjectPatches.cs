@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using UnityEngine;
 
 namespace TSEspionage
@@ -7,37 +8,47 @@ namespace TSEspionage
     {
         // Option_AnimSpeeds has three possible options (originally): 0 for slow, 1 for medium, 2 for fast.
         // 3 has been added for fastest
-        private const int AnimationSlow = 0;
-        private const int AnimationMedium = 1;
-        private const int AnimationFast = 2;
-        private const int AnimationFastest = 3;
+        public const int AnimationSlow = 0;
+        public const int AnimationMedium = 1;
+        public const int AnimationFast = 2;
+        public const int AnimationFastest = 3;
 
-        // The existing implementation uses a resolution of 1024 for its movement calculations
-        private const double InternalWidth = 1024d;
-        
+        // The existing implementation uses a resolution of 1024x768 (1280 diagonal) for its movement calculations
+        private const double InternalDiag = 1280d;
+
+        // Animation pauses
+        private const float FastPause = 0.1f;
+        private const float FastestPause = 0.066666f;
+
         private static readonly AccessTools.FieldRef<AnimateObject, float> AnimationDivisorRef =
             AccessTools.FieldRefAccess<AnimateObject, float>("m_optionScalar");
 
-        public static void Init()
-        {
-            
-        }
-        
         [HarmonyPatch(typeof(AnimateObject), "SetOptionScalar")]
         public static class SetOptionScalarPatch
         {
-            static bool Prefix(AnimateObject instance)
+            public static bool Prefix(AnimateObject __instance)
             {
-                var slowdown = (PlayerPrefs.GetInt("Option_AnimSpeeds", 0)) switch
+                double slowdown;
+                switch (PlayerPrefs.GetInt("Option_AnimSpeeds", AnimationSlow))
                 {
-                    AnimationFastest => 0.1d,
-                    AnimationFast => 1d,
-                    AnimationMedium => 1.5d,
-                    AnimationSlow => 2d,
-                    _ => 2d
-                };
+                    case AnimationFastest:
+                        slowdown = 0.25d;
+                        break;
+                    case AnimationFast:
+                        slowdown = 1d;
+                        break;
+                    case AnimationMedium:
+                        slowdown = 1.5d;
+                        break;
+                    case AnimationSlow:
+                    default:
+                        slowdown = 2d;
+                        break;
+                }
 
-                AnimationDivisorRef(instance) = (float) (slowdown * InternalWidth / Screen.height);
+                var diag = Math.Sqrt(Math.Pow(Screen.width, 2) + Math.Pow(Screen.height, 2));
+                var scale = InternalDiag / diag;
+                AnimationDivisorRef(__instance) = (float)(slowdown * scale);
 
                 return false;
             }
@@ -46,7 +57,7 @@ namespace TSEspionage
         [HarmonyPatch(typeof(AnimateObject), nameof(AnimateObject.StartAnimationToPlaceholder))]
         public static class StartAnimationToPlaceholderPatch
         {
-            static void Prefix(AnimateObject instance, GameObject placeholder, ref float pauseAtDestination)
+            public static void Prefix(ref GameObject placeholder, ref float pauseAtDestination)
             {
                 var animationSpeed = PlayerPrefs.GetInt("Option_AnimSpeeds", 0);
                 pauseAtDestination = AdjustPause(animationSpeed, pauseAtDestination);
@@ -56,8 +67,8 @@ namespace TSEspionage
         [HarmonyPatch(typeof(AnimateObject), nameof(AnimateObject.StartAnimationToLocator))]
         public static class StartAnimationToLocatorPatch
         {
-            static void Prefix(AnimateObject instance, AnimationLocator destinationLocator,
-                AnimationLocator sourceLocator, ref float pauseAtDestination)
+            public static void Prefix(ref AnimationLocator destinationLocator, ref AnimationLocator sourceLocator,
+                ref float pauseAtDestination)
             {
                 var animationSpeed = PlayerPrefs.GetInt("Option_AnimSpeeds", 0);
                 pauseAtDestination = AdjustPause(animationSpeed, pauseAtDestination);
@@ -66,12 +77,15 @@ namespace TSEspionage
 
         private static float AdjustPause(int animationSpeed, float currentPause)
         {
-            return animationSpeed switch
+            switch (animationSpeed)
             {
-                AnimationFast when currentPause > 0.1f => 0.1f,
-                AnimationFastest when currentPause > 0.01667f => 0.01667f,
-                _ => currentPause
-            };
+                case AnimationFast when currentPause > FastPause:
+                    return FastPause;
+                case AnimationFastest when currentPause > FastestPause:
+                    return FastestPause;
+                default:
+                    return currentPause;
+            }
         }
     }
 }

@@ -1,27 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <TargetFramework>net451</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-        <PackageReference Include="Tomlyn" Version="0.15.0" />
     </ItemGroup>
 
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
-            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Assembly-CSharp.dll</HintPath>
+            <HintPath>resources\Assembly-CSharp.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="Unity.TextMeshPro">
-            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+            <HintPath>resources\Unity.TextMeshPro.dll</HintPath>
             <Private>false</Private>
         </Reference>
         <Reference Include="UnityEngine.CoreModule">
-            <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+            <HintPath>resources\UnityEngine.CoreModule.dll</HintPath>
             <Private>false</Private>
         </Reference>
+        <Reference Include="UnityEngine.UI">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.UI.dll</HintPath>
+          <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIElementsModule">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+          <Private>false</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+          <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Twilight Struggle\TwilightStruggle_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+        </Reference>
     </ItemGroup>
-
 </Project>

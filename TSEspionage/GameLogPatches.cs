@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
@@ -11,41 +12,39 @@ namespace TSEspionage
         private static ILogger _log;
         private static GameLogWriter _gameLogWriter;
 
-        private static readonly List<LogEntry> Entries = new List<LogEntry>();
         private static readonly AccessTools.FieldRef<GameLog, List<GameLogItem>> LogItemListRef =
             AccessTools.FieldRefAccess<GameLog, List<GameLogItem>>("m_logItemList");
 
-        public static void Init(EspionageConfig config, ILogger log)
+        public static void Init(ILogger log)
         {
-            _gameLogWriter = new GameLogWriter(config);
+            _gameLogWriter = new GameLogWriter("");
             _log = log;
         }
 
         [HarmonyPatch(typeof(GameLog), nameof(GameLog.UpdateGameLog))]
         public static class UpdateGameLogPatch
         {
-            static void Prefix(GameLog instance)
+            public static void Prefix(GameLog __instance, out LogEntry[] __state)
             {
-                Entries.Clear();
-                foreach (var item in LogItemListRef(instance))
+                __state = LogItemListRef(__instance).Select(item => new LogEntry
                 {
-                    var entry = new LogEntry
-                    {
-                        name = item.m_LogItemName.text,
-                        desc = item.m_LogItemDesc.text,
-                        detail = item.m_LogItemDetail.text
-                    };
-
-                    Entries.Add(entry);
-                }
+                    name = item.m_LogItemName.text,
+                    desc = item.m_LogItemDesc.text,
+                    detail = item.m_LogItemDetail.text
+                }).ToArray();
             }
 
-            static void Postfix()
+            public static void Postfix(LogEntry[] __state)
             {
+                if (__state.Length == 0)
+                {
+                    return;
+                }
+                
                 var gameId = TwilightLib.GetCurrentGameID();
                 try
                 {
-                    _gameLogWriter.Write(gameId, Entries);
+                    _gameLogWriter.Write(gameId, __state);
                 }
                 catch (Exception e)
                 {
@@ -54,7 +53,7 @@ namespace TSEspionage
             }
         }
 
-        private class LogEntry
+        public class LogEntry
         {
             public string name;
             public string desc;
@@ -65,28 +64,38 @@ namespace TSEspionage
         {
             private readonly string _gameLogDir;
 
-            public GameLogWriter(EspionageConfig config)
+            public GameLogWriter(string gameLogDir)
             {
-                if (config.gameLogDir == "")
+                if (gameLogDir == "")
                 {
                     _gameLogDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                         "Twilight Struggle");
                 }
                 else
                 {
-                    _gameLogDir = Path.GetFullPath(config.gameLogDir);
+                    _gameLogDir = Path.GetFullPath(gameLogDir);
                 }
             }
 
-            public void Write(uint gameId, List<LogEntry> entries)
+            public void Write(uint gameId, IEnumerable<LogEntry> entries)
             {
-                using var outputFile = new StreamWriter(Path.Combine(_gameLogDir, $"{gameId}.txt"));
+                CreateOutputDir();
+                
+                var outputFile = new StreamWriter(Path.Combine(_gameLogDir, $"{gameId}.txt"));
                 foreach (var entry in entries)
                 {
                     outputFile.WriteLine("{0}: {1}: {2}", entry.name, entry.desc, entry.detail);
                 }
 
-                outputFile.Flush();
+                outputFile.Close();
+            }
+
+            private void CreateOutputDir()
+            {
+                if (!Directory.Exists(_gameLogDir))
+                {
+                    Directory.CreateDirectory(_gameLogDir);
+                }
             }
         }
     }
