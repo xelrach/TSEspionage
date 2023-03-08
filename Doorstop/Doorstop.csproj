@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net451</TargetFramework>
+    <Version>0.1.0</Version>
+    <Title>Twilight Struggle Espionage</Title>
+    <Authors>Emily Noneman</Authors>
+    <Description>A mod for Playdek's Twilight Struggle that includes improvements and bug-fixes.</Description>
+    <PackageLicenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="resources\windows" />
+    <Folder Include="resources\macos" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TSEspionage\TSEspionage.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostPublish" AfterTargets="Publish">
+    <Exec Command="powershell New-Item -Path '$(PublishDir)' -Name 'TSEspionage' -ItemType 'directory' -Force" />
+    <Exec Command="powershell Copy-Item -Path '$(PublishDir)*.dll' -Destination '$(PublishDir)TSEspionage'" />
+    <Exec Command="powershell Compress-Archive -Path '$(PublishDir)TSEspionage', 'resources\windows\*' -DestinationPath '$(PublishDir)TSEspionage-windows.zip' -Force" />
+    <Exec Command="powershell Compress-Archive -Path '$(PublishDir)TSEspionage', 'resources\macos\*' -DestinationPath '$(PublishDir)TSEspionage-macos.zip' -Force" />
+  </Target>
+</Project>
