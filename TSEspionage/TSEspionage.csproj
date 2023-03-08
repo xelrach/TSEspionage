@@ -35,6 +35,7 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>resources\Third Party\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 </Project>

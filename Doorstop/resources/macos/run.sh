@@ -12,7 +12,7 @@
 
 # LINUX: name of Unity executable
 # MACOS: name of the .app directory
-executable_name=""
+executable_name="TwilightStruggle.app"
 
 # All of the below can be overriden with command line args
 
@@ -23,7 +23,7 @@ enabled="1"
 
 # Path to the assembly to load and execute
 # NOTE: The entrypoint must be of format `static void Doorstop.Entrypoint.Start()`
-target_assembly="Doorstop.dll"
+target_assembly="TSEspionage/Doorstop.dll"
 
 # If enabled, DOORSTOP_DISABLE env var value is ignored
 # USE THIS ONLY WHEN ASKED TO OR YOU KNOW WHAT THIS MEANS
