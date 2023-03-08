@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
@@ -6,6 +12,9 @@ using UnityEngine;
 
 namespace TSEspionage
 {
+    /**
+     * Additions to the Create Game menu. Mostly this adds more game time options.
+     */
     public static class UI_OnlineCreateGamePatches
     {
         private const string GameTimePref = "OnlineCreateGame_GameTimeSecs";

@@ -1,9 +1,18 @@
-﻿using HarmonyLib;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace TSEspionage
 {
+    /**
+     * Patches the Twilight Struggle code.
+     */
     public static class InitEspionage
     {
         private static bool _patched = false;

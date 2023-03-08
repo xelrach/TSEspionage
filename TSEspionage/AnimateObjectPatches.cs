@@ -1,9 +1,18 @@
-﻿using System;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System;
 using HarmonyLib;
 using UnityEngine;
 
 namespace TSEspionage
 {
+    /**
+     * Fixes and improvements to animation speeds. 
+     */
     public static class AnimateObjectPatches
     {
         // Option_AnimSpeeds has three possible options (originally): 0 for slow, 1 for medium, 2 for fast.

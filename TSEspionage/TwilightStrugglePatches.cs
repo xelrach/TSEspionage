@@ -1,4 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System.Runtime.InteropServices;
 using GameData;
 using HarmonyLib;
 using UnityEngine;
@@ -25,6 +31,9 @@ namespace TSEspionage
         Control = 3,
     }
 
+    /**
+     * Changes to the gameplay UI.
+     */
     public static class TwilightStrugglePatches
     {
         private static readonly int RegionScoreStateSize = Marshal.SizeOf(typeof(GameFinalScoreState));

@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System.Collections.Generic;
 using GameData;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +12,7 @@ using UnityEngine.UI;
 namespace TSEspionage
 {
     /**
-     * Activates and deactivates and additional region control bar that shows the scoring for the region in final
+     * Activates and deactivates an additional region control bar that shows the scoring for the region in final
      * scoring. It is only active when Shuttle Diplomacy is in effect.
      */
     public class RegionControlBar : MonoBehaviour

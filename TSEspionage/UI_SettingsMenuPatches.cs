@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System;
 using System.Linq;
 using HarmonyLib;
 using TMPro;
@@ -9,6 +15,9 @@ using Object = UnityEngine.Object;
 
 namespace TSEspionage
 {
+    /**
+     * Additions to the Settings menu.
+     */
     public static class UI_SettingsMenuPatches
     {
         private static readonly int DEFAULT_FRAMERATE = 30;
