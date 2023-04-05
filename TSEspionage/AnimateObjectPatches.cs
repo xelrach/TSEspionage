@@ -23,11 +23,12 @@ namespace TSEspionage
         public const int AnimationFastest = 3;
 
         // The existing implementation uses a resolution of 1024x768 (1280 diagonal) for its movement calculations
-        private const double InternalDiag = 1280d;
+        private const double InternalVert = 768d;
 
         // Animation pauses
-        private const float FastPause = 0.1f;
-        private const float FastestPause = 0.066666f;
+        private const float ShortPause = 0.1f;
+        private const float LongPauseFast = 1.25f;
+        private const float LongPauseFastest = 0.66666f;
 
         private static readonly AccessTools.FieldRef<AnimateObject, float> AnimationDivisorRef =
             AccessTools.FieldRefAccess<AnimateObject, float>("m_optionScalar");
@@ -44,7 +45,7 @@ namespace TSEspionage
                         slowdown = 0.25d;
                         break;
                     case AnimationFast:
-                        slowdown = 1d;
+                        slowdown = 0.8d;
                         break;
                     case AnimationMedium:
                         slowdown = 1.5d;
@@ -55,8 +56,7 @@ namespace TSEspionage
                         break;
                 }
 
-                var diag = Math.Sqrt(Math.Pow(Screen.width, 2) + Math.Pow(Screen.height, 2));
-                var scale = InternalDiag / diag;
+                var scale = InternalVert / Screen.height;
                 AnimationDivisorRef(__instance) = (float)(slowdown * scale);
 
                 return false;
@@ -86,12 +86,24 @@ namespace TSEspionage
 
         private static float AdjustPause(int animationSpeed, float currentPause)
         {
+            if (currentPause < 1.0f)
+            {
+                switch (animationSpeed)
+                {
+                    case AnimationFast when currentPause > ShortPause:
+                    case AnimationFastest when currentPause > ShortPause:
+                        return ShortPause;
+                    default:
+                        return currentPause;
+                }
+            }
+
             switch (animationSpeed)
             {
-                case AnimationFast when currentPause > FastPause:
-                    return FastPause;
-                case AnimationFastest when currentPause > FastestPause:
-                    return FastestPause;
+                case AnimationFast when currentPause > LongPauseFast:
+                    return LongPauseFast;
+                case AnimationFastest when currentPause > LongPauseFastest:
+                    return LongPauseFastest;
                 default:
                     return currentPause;
             }
