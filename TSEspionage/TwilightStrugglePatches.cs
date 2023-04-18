@@ -57,17 +57,21 @@ namespace TSEspionage
 
             private const float TabOffset = 37;
 
+            private const int ChatInputScale = 48;
+            private const int ChatInputTranslation = ChatInputScale / 2;
+
             /**
              * Create additional region scoring bars for Middle East and Africa
              */
             public static void Postfix()
             {
-                // Trim the camera presets 
-                var cameraPresets = GameObject.Find("/Canvas/GameRoot/uGui_HUD/HUD_Lower/CameraPresets");
+                var lowerHUD = GameObject.Find("/Canvas/GameRoot/uGui_HUD/HUD_Lower");
+                // Trim the camera presets
+                var cameraPresets = lowerHUD.transform.Find("CameraPresets");
                 TrimCameraPresets(cameraPresets);
                 
                 // Change the GUI tabs
-                var cardTray = GameObject.Find("/Canvas/GameRoot/uGui_HUD/HUD_Lower/Local Player Card Tray").transform;
+                var cardTray = lowerHUD.transform.Find("Local Player Card Tray").transform;
                 var handTab = cardTray.Find("HandTab");
                 handTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
                 var discardTab = cardTray.Find("DiscardTab");
@@ -81,6 +85,11 @@ namespace TSEspionage
                 activeDiscardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
                 var activeRemovedTab = cardTray.Find("Removed Display").Find("RemovedTab");
                 activeRemovedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+                
+                // Fix the chat input box
+                var chatInput = cardTray.transform.Find("Panel_Chat/Root_Chat/Panel_Input");
+                chatInput.GetComponent<RectTransform>().sizeDelta += new Vector2(ChatInputScale, 0);
+                chatInput.GetComponent<RectTransform>().anchoredPosition += new Vector2(ChatInputTranslation, 0);
 
                 // Add additional region control bars to Asia and the Middle East (if needed)
                 if (_middleEastRegionControlBar == null)
@@ -136,16 +145,16 @@ namespace TSEspionage
             /**
              * Trim off the top of the camera preset columns so they don't cover as much of the map
              */
-            private static void TrimCameraPresets(GameObject cameraPresets)
+            private static void TrimCameraPresets(Transform cameraPresets)
             {
                 var cropRect = new Rect(0, 0, PresetsTextureWidth, PresetsTextureHeight - PresetsTextureCropAmount);
                 var sizeDelta = new Vector2(48f, 186f - PresetsTextureCropAmount / 2.0f);
                 const float positionY = 92f - PresetsTextureCropAmount / 4.0f;
 
                 // Left Side
-                var leftPresets = cameraPresets.transform.Find("Left");
+                var leftPresets = cameraPresets.Find("Left");
                 var leftImage = leftPresets.GetComponent<Image>();
-                var leftShadow = cameraPresets.transform.Find("ShadowLeft");
+                var leftShadow = cameraPresets.Find("ShadowLeft");
 
                 leftImage.sprite = Sprite.Create(leftImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
 
@@ -158,9 +167,9 @@ namespace TSEspionage
                 leftShadowTransform.anchoredPosition = new Vector2(24, positionY);
 
                 // Right side
-                var rightPresets = cameraPresets.transform.Find("Right");
+                var rightPresets = cameraPresets.Find("Right");
                 var rightImage = rightPresets.GetComponent<Image>();
-                var rightShadow = cameraPresets.transform.Find("ShadowRight");
+                var rightShadow = cameraPresets.Find("ShadowRight");
 
                 rightImage.sprite = Sprite.Create(rightImage.sprite.texture, cropRect, new Vector2(0.5f, 0.5f));
 
