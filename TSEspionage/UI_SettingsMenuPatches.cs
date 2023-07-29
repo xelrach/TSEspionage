@@ -188,7 +188,8 @@ namespace TSEspionage
 
         private static void CreateFpsPopup(UI_SettingsMenu instance)
         {
-            _fpsPopup = Object.Instantiate(instance.m_AnimationSpeedPopup, instance.m_AnimationSpeedPopup.transform.parent);
+            _fpsPopup = Object.Instantiate(instance.m_AnimationSpeedPopup,
+                instance.m_AnimationSpeedPopup.transform.parent);
             _fpsPopup.name = "FPS_Popup";
             _fpsPopup.GetComponent<RegisterPopup>().popupName = "FPS Popup";
             _fpsPopup.transform.Find("Label (TMP)").GetComponent<TextMeshProUGUI>().text = "x FPS Popup";
@@ -214,10 +215,10 @@ namespace TSEspionage
         {
             _fpsPopup.SetActive(true);
         }
-        
-        private static  string[] GetPlayersToHide()
+
+        private static string[] GetPlayersToHide()
         {
-            var players = "".Split(new char[]{',',';'}, StringSplitOptions.RemoveEmptyEntries);
+            var players = "".Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
             return players.Select(player => player.Trim())
                 .Where(trimmedPlayer => trimmedPlayer != "")

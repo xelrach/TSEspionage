@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.10.1" />
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.10.1" GeneratePathProperty="true" />
     <PackageReference Include="Lib.Harmony" Version="2.2.2" />
   </ItemGroup>
 
@@ -38,4 +40,8 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(PkgGoogle_Protobuf_Tools)\tools\windows_x64\protoc -I=$(PkgGoogle_Protobuf_Tools)\tools -I=$(ProjectDir)resources\proto --csharp_out=$(ProjectDir) $(ProjectDir)resources\proto\playdek\twilight_struggle\v1\*.proto" />
+  </Target>
 </Project>

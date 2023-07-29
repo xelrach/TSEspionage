@@ -1,0 +1,346 @@
+syntax = "proto3";
+package playdek.twilight_struggle.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message GameEvent {
+  google.protobuf.Timestamp timestamp = 1;
+  // [2, 9] are reserved for future use
+  oneof details {
+    OutputEventPause output_event_pause = 10;
+    OutputEventAnimationCard output_event_animation_card = 11;
+    OutputEventAnimationAddInfluence output_event_animation_add_influence = 12;
+    OutputEventAnimationRemoveInfluence output_event_animation_remove_influence = 13;
+    OutputEventAnimationTargetCountry output_event_animation_target_country = 14;
+    OutputEventAnimationVictoryPoints output_event_animation_victory_points = 15;
+    CountryDefinition country_definition = 16;
+    CountryInfluence country_influence = 17;
+    CardLocation card_location = 18;
+    CardInPlayStatus card_in_play_status = 19;
+    ActionRound action_round = 20;
+    PhasingPlayer phasing_player = 21;
+    TurnNumber turn_number = 22;
+    VictoryPointTrack victory_point_track = 23;
+    DefconLevel defcon_level = 24;
+    MilitaryOps military_ops = 25;
+    SpaceRaceTrack space_race_track = 26;
+    CardsSpaced cards_spaced = 27;
+    ChinaCard china_card = 28;
+    GameOver game_over = 29;
+    AssignSides assign_sides = 30;
+    Realignment realignment = 31;
+    PushResolveCard push_resolve_card = 32;
+    PopResolveCard pop_resolve_card = 33;
+    PushRevealCard push_reveal_card = 34;
+    PopRevealCard pop_reveal_card = 35;
+    SetRevealCardPlayer set_reveal_card_player = 36;
+    SetHeadlineCardRevealed set_headline_card_revealed = 37;
+    LoadProgress load_progress = 38;
+    CommitPlayerDecision commit_player_decision = 39;
+    CoupRoll coup_roll = 40;
+    WarRoll war_roll = 41;
+    SpaceRaceRoll space_race_roll = 42;
+    TrapRoll trap_roll = 43;
+    ScoringCardPlayed scoring_card_played = 44;
+    FinalScoring final_scoring = 45;
+    EffectRoll effect_roll = 46;
+    EndTurn end_turn = 47;
+    HeadlineAnnounce headline_announce = 48;
+    Reshuffle reshuffle = 49;
+    PauseForRevealedCards pause_for_revealed_cards = 50;
+    TutorialAISelectedOption tutorial_ai_selected_option = 51;
+    BiddingResults bidding_results = 52;
+    TurnZero turn_zero = 53;
+    TurnZeroCrisisCard turn_zero_crisis_card = 54;
+    SetStatecraftCardRevealed set_statecraft_card_revealed = 55;
+    CrisisCardRoll crisis_card_roll = 56;
+  }
+}
+
+message OutputEventPause {
+  int32 pause_type = 1;
+  uint32 animation_data = 2;
+  int32 exclude_player_index = 3;
+}
+
+message OutputEventAnimationCard {
+  int32 card_instance_id = 1;
+  int32 animation_source_location = 2;
+  int32 animation_source_instance_id = 3;
+  int32 animation_destination_location = 4;
+  int32 animation_destination_instance_id = 5;
+  int32 animation_event_hint = 6;
+}
+
+message OutputEventAnimationAddInfluence {
+  int32 source_player_index = 1;
+  int32 source_card_instance_id = 2;
+  int32 country_instance_id = 3;
+  int32 influence_count = 4;
+  int32 animation_event_hint = 5;
+}
+
+message OutputEventAnimationRemoveInfluence {
+  int32 source_player_index = 1;
+  int32 source_card_instance_id = 2;
+  int32 country_instance_id = 3;
+  int32 influence_count = 4;
+  int32 animation_event_hint = 5;
+}
+
+message OutputEventAnimationTargetCountry {
+  int32 source_player_index = 1;
+  int32 source_card_instance_id = 2;
+  int32 country_instance_id = 3;
+  int32 target_type = 4;
+  int32 animation_event_hint = 5;
+}
+
+message OutputEventAnimationVictoryPoints {
+  int32 source_card_instance_id = 1;
+  int32 victory_point_count = 2;
+  int32 animation_event_hint = 3;
+}
+
+message CountryDefinition {
+  int32 id = 1;
+  int32 stability = 2;
+  int32 battleground = 3;
+}
+
+message CountryInfluence {
+  int32 id = 1;
+  int32 ussr_influence = 2;
+  int32 usa_influence = 3;
+}
+
+message CardLocation {
+  int32 id = 1;
+  int32 location = 2;
+  int32 do_not_animate = 3;
+}
+
+message CardInPlayStatus {
+  int32 card_in_play_instance_id = 1;
+  int32 source_card_instance_id = 2;
+  int32 owner_index = 3;
+  int32 duration_type = 4;
+  int32 in_play = 5;
+}
+
+message ActionRound {
+  int32 is_simulating = 1;
+  int32 action_round = 2;
+  int32 end_of_turn = 3;
+  int32 phasing_player_superpower = 4;
+  int32 player_id = 5;
+  int32 affected_by_missile_envy = 6;
+  int32 affected_by_kremlin_flu = 7;
+  int32 scoring_card_count = 8;
+}
+
+message PhasingPlayer {
+  int32 phasing_player = 1;
+}
+
+message TurnNumber {
+  int32 is_simulating = 1;
+  int32 turn_number = 2;
+  int32 ussr_hand = 3;
+  int32 usa_hand = 4;
+  int32 has_extra_round = 5;
+}
+
+message VictoryPointTrack {
+  int32 victory_point_track = 1;
+}
+
+message DefconLevel {
+  int32 is_simulating = 1;
+  int32 defcon_level = 2;
+}
+
+message MilitaryOps {
+  int32 ussr_milops = 1;
+  int32 usa_milops = 2;
+}
+
+message SpaceRaceTrack {
+  int32 ussr_space = 1;
+  int32 usa_space = 2;
+}
+
+message CardsSpaced {
+  int32 ussr_cards_spaced = 1;
+  int32 usa_cards_spaced = 2;
+}
+
+message ChinaCard {
+  int32 instance_id = 1;
+  int32 player = 2;
+  int32 face_up = 3;
+}
+
+message GameOver {
+  int32 winner = 1;
+  int32 win_type = 2;
+}
+
+message AssignSides {
+  int32 ussr_player_id = 1;
+}
+
+message Realignment {
+  int32 realign_player_index = 1;
+  int32 country = 2;
+  int32 ussr_roll_result = 3;
+  int32 usa_roll_result = 4;
+}
+
+message PushResolveCard {
+  int32 card = 1;
+}
+
+message PopResolveCard {
+  int32 card = 1;
+}
+
+message PushRevealCard {
+  int32 card = 1;
+  int32 player = 2;
+}
+
+message PopRevealCard {
+  int32 card = 1;
+}
+
+message SetRevealCardPlayer {
+  int32 player_index = 1;
+}
+
+message SetHeadlineCardRevealed {
+  int32 player_index = 1;
+  int32 revealed = 2;
+}
+
+message LoadProgress {
+  float progress = 1;
+}
+
+message CommitPlayerDecision {
+  int32 move_count = 1;
+  int32 winner_player_index = 2;
+}
+
+message CoupRoll {
+  int32 player_index = 1;
+  int32 country_id = 2;
+  int32 roll = 3;
+}
+
+message WarRoll {
+  int32 player_index = 1;
+  int32 country_id = 2;
+  int32 roll = 3;
+}
+
+message SpaceRaceRoll {
+  int32 is_simulating = 1;
+  int32 roll = 2;
+  int32 success = 3;
+  int32 card = 4;
+  int32 space_race_player_index = 5;
+  int32 space_race_current_level = 6;
+  int32 space_race_opponent_level = 7;
+  int32 space_race_remaining_attempts = 8;
+  int32 space_race_next_level = 9;
+  int32 space_race_required_ops = 10;
+  int32 space_race_required_roll = 11;
+  int32 space_race_advance_victory_points = 12;
+  int32 space_race_advance_gain_bonus = 13;
+  int32 space_race_advance_remove_bonus = 14;
+}
+
+message TrapRoll {
+  int32 player_id = 1;
+  int32 roll = 2;
+  int32 trap_source_card_id = 3;
+  int32 trap_discard_card_id = 4;
+  int32 trap_required_operations_points = 5;
+  int32 trap_escape_roll_target = 6;
+}
+
+message ScoringCardPlayed {
+  int32 card_id = 1;
+  int32 player_id = 2;
+}
+
+message FinalScoring {
+  int32 victory_points_ussr = 1;
+  int32 victory_points_usa = 2;
+  int32 european_control_winner = 3;
+}
+
+message EffectRoll {
+  int32 card_id = 1;
+  int32 ussr_roll = 2;
+  int32 ussr_modify = 3;
+  int32 usa_roll = 4;
+  int32 usa_modify = 5;
+}
+
+message EndTurn {
+  int32 ussr_ops = 1;
+  int32 usa_ops = 2;
+  int32 defcon = 3;
+  int32 space_race = 4;
+}
+
+message HeadlineAnnounce {
+  int32 space_race = 1;
+}
+
+message Reshuffle {
+  int32 zero = 1;
+}
+
+message PauseForRevealedCards {
+  int32 player_index = 1;
+}
+
+message TutorialAISelectedOption {
+  uint32 selection_hint = 1;
+  uint32 selection_id = 2;
+}
+
+message BiddingResults {
+  int32 player1_id = 1;
+  int32 player1_bid = 2;
+  int32 player1_bid_side = 3;
+  int32 player2_id = 4;
+  int32 player2_bid = 5;
+  int32 player2_bid_side = 6;
+  int32 tie_breaker = 7;
+}
+
+message TurnZero {
+  int32 begin = 1;
+}
+
+message TurnZeroCrisisCard {
+  int32 crisis_card_instance_id = 1;
+}
+
+message SetStatecraftCardRevealed {
+  int32 player_index = 1;
+  int32 revealed = 2;
+}
+
+message CrisisCardRoll {
+  int32 crisis_result_index = 1;
+  int32 crisis_card_instance_id = 2;
+  int32 die_roll = 3;
+  int32 modifier_ussr = 4;
+  int32 modifier_usa = 5;
+  int32 final_result = 6;
+}

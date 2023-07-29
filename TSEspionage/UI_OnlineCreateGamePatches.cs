@@ -19,7 +19,7 @@ namespace TSEspionage
     {
         private const string GameTimePref = "OnlineCreateGame_GameTimeSecs";
         private const int DefaultGameTime = 90 * 60;
-        
+
         private const int ScenarioStandard = 0;
         private const int ScenarioChinese = 1;
         private const int ScenarioLateWar = 2;

@@ -200,7 +200,7 @@ namespace TSEspionage
                     return;
                 }
 
-                var gcHandle = GCHandle.Alloc((object)new byte[RegionScoreStateSize], GCHandleType.Pinned);
+                var gcHandle = GCHandle.Alloc(new byte[RegionScoreStateSize], GCHandleType.Pinned);
                 var ptr = gcHandle.AddrOfPinnedObject();
                 if (TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize) != 0)
                 {

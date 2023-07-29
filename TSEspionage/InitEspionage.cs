@@ -33,7 +33,7 @@ namespace TSEspionage
                 UI_SettingsMenuPatches.Init();
 
                 // Patch the TS assembly
-                new Harmony("com.example.patch").PatchAll();
+                new Harmony("TSEspionage").PatchAll();
 
                 _patched = true;
             }
