@@ -43,7 +43,6 @@ namespace TSEspionage
                     CardCountManager.UpdateCardCounts();
                     break;
                 case EventType.ChinaCard:
-                    var chinaCard = (ChinaCard)Marshal.PtrToStructure(eventPointer, typeof(ChinaCard));
                     CardCountManager.UpdateCardCounts();
                     break;
                 case EventType.CountryInfluence:
@@ -57,6 +56,13 @@ namespace TSEspionage
                     break;
                 case EventType.GameOver:
                     var gameOver = Marshal.PtrToStructure<GameOver>(eventPointer);
+                    var gameId = TwilightLibWrapper.GetCurrentGameId();
+                    var players = TwilightLibWrapper.GetPlayers();
+                    GameLogWriter.WriteGameOver(
+                        gameId,
+                        players.GetSuperpowerForPlayerId(gameOver.winner),
+                        (GameOverType)gameOver.win_type
+                    );
                     break;
                 case EventType.HeadlineAnnounce:
                     CardCountManager.UpdateCardCounts();
@@ -92,6 +98,9 @@ namespace TSEspionage
                     break;
                 case EventType.EndTurn:
                     CardCountManager.UpdateCardCounts();
+                    break;
+                case EventType.LogUpdated:
+                    var logUpdated = Marshal.PtrToStructure<LogUpdated>(eventPointer);
                     break;
             }
         }
