@@ -33,6 +33,19 @@ namespace TSEspionage
         Control = 3,
     }
 
+    public enum GameEndType
+    {
+        Unknown = 0,
+        VictoryPointTrack = 1,
+        EuropeanControl = 2,
+        FinalScoring = 3,
+        Defcon1 = 4,
+        HeldScoringCard = 5,
+        CubanMissileCrisis = 6,
+        WarGames = 7,
+        Forfeit = 8,
+    }
+
     /**
      * Changes to the gameplay UI.
      */
@@ -42,6 +55,7 @@ namespace TSEspionage
 
         private static RegionControlBar _middleEastRegionControlBar;
         private static RegionControlBar _asiaRegionControlBar;
+        private static GameEventHandler _gameEventHandler = new GameEventHandler();
 
         private static readonly GameEventHandler _gameEventHandler = new GameEventHandler();
 
@@ -200,7 +214,7 @@ namespace TSEspionage
                     return;
                 }
 
-                var gcHandle = GCHandle.Alloc((object)new byte[RegionScoreStateSize], GCHandleType.Pinned);
+                var gcHandle = GCHandle.Alloc(new byte[RegionScoreStateSize], GCHandleType.Pinned);
                 var ptr = gcHandle.AddrOfPinnedObject();
                 if (TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize) != 0)
                 {
