@@ -4,11 +4,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+using System;
 using System.Runtime.InteropServices;
 using GameData;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace TSEspionage
 {
@@ -41,6 +43,8 @@ namespace TSEspionage
         private static RegionControlBar _middleEastRegionControlBar;
         private static RegionControlBar _asiaRegionControlBar;
 
+        private static readonly GameEventHandler _gameEventHandler = new GameEventHandler();
+
         public static void Init()
         {
         }
@@ -69,7 +73,7 @@ namespace TSEspionage
                 // Trim the camera presets
                 var cameraPresets = lowerHUD.transform.Find("CameraPresets");
                 TrimCameraPresets(cameraPresets);
-                
+
                 // Change the GUI tabs
                 var cardTray = lowerHUD.transform.Find("Local Player Card Tray").transform;
                 var handTab = cardTray.Find("HandTab");
@@ -78,14 +82,14 @@ namespace TSEspionage
                 discardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
                 var removedTab = cardTray.Find("RemovedTab");
                 removedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                
+
                 var activeHandTab = cardTray.Find("Hand Display").Find("HandTab");
                 activeHandTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
                 var activeDiscardTab = cardTray.Find("Discard Display").Find("DiscardTab");
                 activeDiscardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
                 var activeRemovedTab = cardTray.Find("Removed Display").Find("RemovedTab");
                 activeRemovedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                
+
                 // Fix the chat input box
                 var chatInput = cardTray.transform.Find("Panel_Chat/Root_Chat/Panel_Input");
                 chatInput.GetComponent<RectTransform>().sizeDelta += new Vector2(ChatInputScale, 0);
@@ -210,6 +214,18 @@ namespace TSEspionage
                 }
 
                 gcHandle.Free();
+            }
+        }
+
+        /**
+         * Listen to game events
+         */
+        [HarmonyPatch(typeof(TwilightStruggle), "HandleEvent")]
+        public static class HandleEventPatch
+        {
+            public static void Prefix(ref IntPtr eventBuffer)
+            {
+                _gameEventHandler.HandleEvent(ref eventBuffer);
             }
         }
     }

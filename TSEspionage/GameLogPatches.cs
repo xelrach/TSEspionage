@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using HarmonyLib;
 using UnityEngine;
@@ -33,9 +32,9 @@ namespace TSEspionage
         [HarmonyPatch(typeof(GameLog), nameof(GameLog.UpdateGameLog))]
         public static class UpdateGameLogPatch
         {
-            public static void Prefix(GameLog __instance, out LogEntry[] __state)
+            public static void Prefix(GameLog __instance, out GameLogEntry[] __state)
             {
-                __state = LogItemListRef(__instance).Select(item => new LogEntry
+                __state = LogItemListRef(__instance).Select(item => new GameLogEntry
                 {
                     name = item.m_LogItemName.text,
                     desc = item.m_LogItemDesc.text,
@@ -43,13 +42,13 @@ namespace TSEspionage
                 }).ToArray();
             }
 
-            public static void Postfix(LogEntry[] __state)
+            public static void Postfix(GameLogEntry[] __state)
             {
                 if (__state.Length == 0)
                 {
                     return;
                 }
-                
+
                 var gameId = TwilightLib.GetCurrentGameID();
                 try
                 {
@@ -58,52 +57,6 @@ namespace TSEspionage
                 catch (Exception e)
                 {
                     _log.Log(LogType.Error, $"Failed writing game log for game {gameId}", e);
-                }
-            }
-        }
-
-        public class LogEntry
-        {
-            public string name;
-            public string desc;
-            public string detail;
-        }
-
-        private class GameLogWriter
-        {
-            private readonly string _gameLogDir;
-
-            public GameLogWriter(string gameLogDir)
-            {
-                if (gameLogDir == "")
-                {
-                    _gameLogDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal),
-                        "Twilight Struggle");
-                }
-                else
-                {
-                    _gameLogDir = Path.GetFullPath(gameLogDir);
-                }
-            }
-
-            public void Write(uint gameId, IEnumerable<LogEntry> entries)
-            {
-                CreateOutputDir();
-                
-                var outputFile = new StreamWriter(Path.Combine(_gameLogDir, $"{gameId}.txt"));
-                foreach (var entry in entries)
-                {
-                    outputFile.WriteLine("{0}: {1}: {2}", entry.name, entry.desc, entry.detail);
-                }
-
-                outputFile.Close();
-            }
-
-            private void CreateOutputDir()
-            {
-                if (!Directory.Exists(_gameLogDir))
-                {
-                    Directory.CreateDirectory(_gameLogDir);
                 }
             }
         }
