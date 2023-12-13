@@ -23,9 +23,9 @@ namespace TSEspionage
         private static readonly AccessTools.FieldRef<GameLog, List<GameLogItem>> LogItemListRef =
             AccessTools.FieldRefAccess<GameLog, List<GameLogItem>>("m_logItemList");
 
-        public static void Init(ILogger log)
+        public static void Init(GameLogWriter gameLogWriter, ILogger log)
         {
-            _gameLogWriter = new GameLogWriter("");
+            _gameLogWriter = gameLogWriter;
             _log = log;
         }
 
@@ -49,7 +49,7 @@ namespace TSEspionage
                     return;
                 }
 
-                var gameId = TwilightLib.GetCurrentGameID();
+                var gameId = TwilightLibWrapper.GetCurrentGameId();
                 try
                 {
                     _gameLogWriter.Write(gameId, __state);

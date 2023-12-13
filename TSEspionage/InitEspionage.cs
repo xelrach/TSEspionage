@@ -26,14 +26,17 @@ namespace TSEspionage
         {
             if (!_patched)
             {
+                var gameLogWriter = new GameLogWriter("");
+                var gameEventHandler = new GameEventHandler(gameLogWriter);
+
                 // Initialize the patch classes
-                GameLogPatches.Init(Debug.unityLogger);
+                GameLogPatches.Init(gameLogWriter, Debug.unityLogger);
                 LoadLevelSplashScreenPatches.Init();
-                TwilightStrugglePatches.Init();
+                TwilightStrugglePatches.Init(gameEventHandler);
                 UI_SettingsMenuPatches.Init();
 
                 // Patch the TS assembly
-                new Harmony("com.example.patch").PatchAll();
+                new Harmony("com.twilight-struggle.TSEspionage").PatchAll();
 
                 _patched = true;
             }
