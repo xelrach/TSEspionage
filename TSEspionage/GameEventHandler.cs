@@ -66,6 +66,9 @@ namespace TSEspionage
                     }
 
                     break;
+                case EventType.OutputEventAnimationCard:
+                    CardCountManager.UpdateCardCounts();
+                    break;
                 case EventType.PhasingPlayer:
                     CardCountManager.UpdateCardCounts();
                     break;

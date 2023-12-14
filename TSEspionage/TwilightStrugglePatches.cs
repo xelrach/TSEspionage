@@ -42,6 +42,7 @@ namespace TSEspionage
         private static RegionControlBar _asiaRegionControlBar;
 
         private static GameEventHandler _gameEventHandler;
+        private static CardCountManager _cardCountManager;
 
         public static void Init(GameEventHandler gameEventHandler)
         {
@@ -68,9 +69,9 @@ namespace TSEspionage
             {
                 var gameRoot = GameObject.Find("/Canvas/GameRoot");
                 gameRoot.AddComponent<CardCountManager>();
-                var cardCountManager = gameRoot.GetComponent<CardCountManager>();
+                _cardCountManager = gameRoot.GetComponent<CardCountManager>();
 
-                _gameEventHandler.CardCountManager = cardCountManager;
+                _gameEventHandler.CardCountManager = _cardCountManager;
 
                 var lowerHUD = gameRoot.transform.Find("uGui_HUD/HUD_Lower");
                 var cardTray = lowerHUD.Find("Local Player Card Tray");
@@ -81,7 +82,7 @@ namespace TSEspionage
 
                 // Move and update the card tabs
                 cardTray.gameObject.AddComponent<CardTabBehaviour>();
-                cardTray.gameObject.GetComponent<CardTabBehaviour>().Initialize(cardCountManager, cardTray);
+                cardTray.gameObject.GetComponent<CardTabBehaviour>().Initialize(_cardCountManager, cardTray);
 
                 // Fix the chat input box
                 var chatInput = cardTray.Find("Panel_Chat/Root_Chat/Panel_Input");
@@ -200,12 +201,24 @@ namespace TSEspionage
         /**
          * Listen to game events
          */
-        [HarmonyPatch(typeof(TwilightStruggle), "HandleEvent")]
+        [HarmonyPatch(typeof(TwilightStruggle), nameof(TwilightStruggle.HandleEvent))]
         public static class HandleEventPatch
         {
-            public static void Prefix(ref IntPtr eventBuffer)
+            public static void Postfix(ref IntPtr eventBuffer)
             {
                 _gameEventHandler.HandleEvent(ref eventBuffer);
+            }
+        }
+
+        /**
+         * Listen for the Undo button being pressed
+         */
+        [HarmonyPatch(typeof(TwilightStruggle), nameof(TwilightStruggle.OnActionConfirmButtonUndoPressed))]
+        public static class OnActionConfirmButtonUndoPressedPatch
+        {
+            public static void Postfix()
+            {
+                _cardCountManager.UpdateCardCounts();
             }
         }
 
