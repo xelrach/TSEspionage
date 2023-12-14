@@ -10,6 +10,9 @@ using GameEvent;
 
 namespace TSEspionage
 {
+    /**
+     * Listens for game events and dispatches the event values to various classes.
+     */
     public class GameEventHandler
     {
         private const float GameLoaded = 2.0f;

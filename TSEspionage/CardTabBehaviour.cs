@@ -9,6 +9,10 @@ using UnityEngine;
 
 namespace TSEspionage
 {
+    /**
+     * Controls the card tabs in the lower HUD. Moves them to a better place on-screen and adds a card count to
+     * each tab.
+     */
     public class CardTabBehaviour : MonoBehaviour
     {
         private const float TabOffset = 37;
@@ -69,6 +73,9 @@ namespace TSEspionage
             _cardCountManager.RemoveListener(UpdateText);
         }
 
+        /**
+         * Updates the text of the card tabs with the count of each hand or pile.
+         */
         public void UpdateText(CardCounts cardCounts)
         {
             ushort playerCount;

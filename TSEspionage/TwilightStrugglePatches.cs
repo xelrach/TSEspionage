@@ -5,8 +5,6 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
-using GameData;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -89,7 +87,7 @@ namespace TSEspionage
                 chatInput.GetComponent<RectTransform>().sizeDelta += new Vector2(ChatInputScale, 0);
                 chatInput.GetComponent<RectTransform>().anchoredPosition += new Vector2(ChatInputTranslation, 0);
 
-                // Add additional region control bars to Asia and the Middle East (if needed)
+                // Add additional region control bars to Asia and the Middle East
                 var meRegionSummary = GameObject.Find(
                     "/MapCanvas/Map/GameMap/RegionScoring/Scoring_MiddleEast");
                 var meAnimationSpeed = meRegionSummary.GetComponent<ScorePanel>().m_animateTime;
@@ -114,6 +112,10 @@ namespace TSEspionage
                     new Vector2(regionPosition.x, regionPosition.y + InfluenceBar + InfluenceBarPadding);
             }
 
+            /**
+             * A new region control bar that show the region scoring in final scoring (only visible when
+             * Shuttle Diplomacy is active).
+             */
             private static GameObject CreateFinalScoringControlBar(GameObject parent)
             {
                 var influenceBar = parent.transform.Find("Influence").gameObject;
@@ -220,26 +222,6 @@ namespace TSEspionage
             {
                 _cardCountManager.UpdateCardCounts();
             }
-        }
-
-        public static EPlayer GetSide(int localPlayerId)
-        {
-            var instanceIds = new int[2];
-            var instanceIdsHandle = GCHandle.Alloc(instanceIds, GCHandleType.Pinned);
-            TwilightLib.GetInstanceList(localPlayerId, 1, instanceIdsHandle.AddrOfPinnedObject(), 2);
-            instanceIdsHandle.Free();
-
-            var playerDataHandle = GCHandle.Alloc(new byte[Marshal.SizeOf<PlayerData>()], GCHandleType.Pinned);
-            var playerDataPtr = playerDataHandle.AddrOfPinnedObject();
-            foreach (var instanceId in instanceIds)
-            {
-                TwilightLib.GetInstanceData(1, instanceId, playerDataPtr, Marshal.SizeOf<PlayerData>());
-                var playerData = (PlayerData)Marshal.PtrToStructure(playerDataPtr, typeof(PlayerData));
-            }
-
-            playerDataHandle.Free();
-
-            return EPlayer.USSR;
         }
     }
 }

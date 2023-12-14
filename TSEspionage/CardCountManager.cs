@@ -10,6 +10,9 @@ using UnityEngine.Events;
 
 namespace TSEspionage
 {
+    /**
+     * Counts of cards in each hand/pile.
+     */
     public class CardCounts
     {
         public readonly Players Players;
@@ -53,6 +56,10 @@ namespace TSEspionage
         }
     }
 
+    /**
+     * Listens for events that might have changed the counts of cards in hands or piles. Recalculates the counts and
+     * sends them to listeners.
+     */
     public class CardCountManager : MonoBehaviour
     {
         private readonly UnityEvent<CardCounts> _eventTrigger = new UnityEvent<CardCounts>();

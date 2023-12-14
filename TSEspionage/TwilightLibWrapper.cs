@@ -1,9 +1,18 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GameData;
 
 namespace TSEspionage
 {
+    /**
+     * Wrapper around the messy awkwardness of TwilightLib.
+     */
     public static class TwilightLibWrapper
     {
         private static readonly int DeckCountsSize = Marshal.SizeOf<GameDeckCounts>();
