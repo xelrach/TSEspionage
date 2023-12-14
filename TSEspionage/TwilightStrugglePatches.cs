@@ -5,8 +5,6 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
-using GameData;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,15 +36,15 @@ namespace TSEspionage
      */
     public static class TwilightStrugglePatches
     {
-        private static readonly int RegionScoreStateSize = Marshal.SizeOf(typeof(GameFinalScoreState));
-
         private static RegionControlBar _middleEastRegionControlBar;
         private static RegionControlBar _asiaRegionControlBar;
 
-        private static readonly GameEventHandler _gameEventHandler = new GameEventHandler();
+        private static GameEventHandler _gameEventHandler;
+        private static CardCountManager _cardCountManager;
 
-        public static void Init()
+        public static void Init(GameEventHandler gameEventHandler)
         {
+            _gameEventHandler = gameEventHandler ?? throw new ArgumentNullException(nameof(gameEventHandler));
         }
 
         [HarmonyPatch(typeof(TwilightStruggle), nameof(TwilightStruggle.Initialize))]
@@ -59,73 +57,65 @@ namespace TSEspionage
             private const float InfluenceBar = 52;
             private const float InfluenceBarPadding = 2;
 
-            private const float TabOffset = 37;
-
             private const int ChatInputScale = 48;
             private const int ChatInputTranslation = ChatInputScale / 2;
 
             /**
-             * Create additional region scoring bars for Middle East and Africa
+             * Update the scene's GameObjects
              */
             public static void Postfix()
             {
-                var lowerHUD = GameObject.Find("/Canvas/GameRoot/uGui_HUD/HUD_Lower");
+                var gameRoot = GameObject.Find("/Canvas/GameRoot");
+                gameRoot.AddComponent<CardCountManager>();
+                _cardCountManager = gameRoot.GetComponent<CardCountManager>();
+
+                _gameEventHandler.CardCountManager = _cardCountManager;
+
+                var lowerHUD = gameRoot.transform.Find("uGui_HUD/HUD_Lower");
+                var cardTray = lowerHUD.Find("Local Player Card Tray");
+
                 // Trim the camera presets
-                var cameraPresets = lowerHUD.transform.Find("CameraPresets");
+                var cameraPresets = lowerHUD.Find("CameraPresets");
                 TrimCameraPresets(cameraPresets);
 
-                // Change the GUI tabs
-                var cardTray = lowerHUD.transform.Find("Local Player Card Tray").transform;
-                var handTab = cardTray.Find("HandTab");
-                handTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                var discardTab = cardTray.Find("DiscardTab");
-                discardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                var removedTab = cardTray.Find("RemovedTab");
-                removedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-
-                var activeHandTab = cardTray.Find("Hand Display").Find("HandTab");
-                activeHandTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                var activeDiscardTab = cardTray.Find("Discard Display").Find("DiscardTab");
-                activeDiscardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
-                var activeRemovedTab = cardTray.Find("Removed Display").Find("RemovedTab");
-                activeRemovedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+                // Move and update the card tabs
+                cardTray.gameObject.AddComponent<CardTabBehaviour>();
+                cardTray.gameObject.GetComponent<CardTabBehaviour>().Initialize(_cardCountManager, cardTray);
 
                 // Fix the chat input box
-                var chatInput = cardTray.transform.Find("Panel_Chat/Root_Chat/Panel_Input");
+                var chatInput = cardTray.Find("Panel_Chat/Root_Chat/Panel_Input");
                 chatInput.GetComponent<RectTransform>().sizeDelta += new Vector2(ChatInputScale, 0);
                 chatInput.GetComponent<RectTransform>().anchoredPosition += new Vector2(ChatInputTranslation, 0);
 
-                // Add additional region control bars to Asia and the Middle East (if needed)
-                if (_middleEastRegionControlBar == null)
-                {
-                    var middleEastRegionSummary = GameObject.Find(
-                        "/MapCanvas/Map/GameMap/RegionScoring/Scoring_MiddleEast");
-                    var animationSpeed = middleEastRegionSummary.GetComponent<ScorePanel>().m_animateTime;
+                // Add additional region control bars to Asia and the Middle East
+                var meRegionSummary = GameObject.Find(
+                    "/MapCanvas/Map/GameMap/RegionScoring/Scoring_MiddleEast");
+                var meAnimationSpeed = meRegionSummary.GetComponent<ScorePanel>().m_animateTime;
 
-                    var finalInfluenceBar = CreateFinalScoringControlBar(middleEastRegionSummary);
+                var meFinalInfluenceBar = CreateFinalScoringControlBar(meRegionSummary);
 
-                    _middleEastRegionControlBar = finalInfluenceBar.GetComponent<RegionControlBar>();
-                    _middleEastRegionControlBar.Init(finalInfluenceBar, animationSpeed);
-                }
+                _middleEastRegionControlBar = meFinalInfluenceBar.GetComponent<RegionControlBar>();
+                _middleEastRegionControlBar.Init(meFinalInfluenceBar, meAnimationSpeed);
 
-                if (_asiaRegionControlBar == null)
-                {
-                    var asiaRegionSummary = GameObject.Find("/MapCanvas/Map/GameMap/RegionScoring/Scoring_Asia");
-                    var animationSpeed = asiaRegionSummary.GetComponent<ScorePanel>().m_animateTime;
+                var asiaRegionSummary = GameObject.Find("/MapCanvas/Map/GameMap/RegionScoring/Scoring_Asia");
+                var asiaAnimationSpeed = asiaRegionSummary.GetComponent<ScorePanel>().m_animateTime;
 
-                    var finalInfluenceBar = CreateFinalScoringControlBar(asiaRegionSummary);
+                var asiaFinalInfluenceBar = CreateFinalScoringControlBar(asiaRegionSummary);
 
-                    _asiaRegionControlBar = finalInfluenceBar.GetComponent<RegionControlBar>();
-                    _asiaRegionControlBar.Init(finalInfluenceBar, animationSpeed);
+                _asiaRegionControlBar = asiaFinalInfluenceBar.GetComponent<RegionControlBar>();
+                _asiaRegionControlBar.Init(asiaFinalInfluenceBar, asiaAnimationSpeed);
 
-                    // Move the Asia region summary up so it tis when its expanded
-                    var transform = asiaRegionSummary.GetComponent<RectTransform>();
-                    var regionPosition = transform.anchoredPosition;
-                    transform.anchoredPosition =
-                        new Vector2(regionPosition.x, regionPosition.y + InfluenceBar + InfluenceBarPadding);
-                }
+                // Move the Asia region summary up so it fits when it is expanded
+                var transform = asiaRegionSummary.GetComponent<RectTransform>();
+                var regionPosition = transform.anchoredPosition;
+                transform.anchoredPosition =
+                    new Vector2(regionPosition.x, regionPosition.y + InfluenceBar + InfluenceBarPadding);
             }
 
+            /**
+             * A new region control bar that show the region scoring in final scoring (only visible when
+             * Shuttle Diplomacy is active).
+             */
             private static GameObject CreateFinalScoringControlBar(GameObject parent)
             {
                 var influenceBar = parent.transform.Find("Influence").gameObject;
@@ -200,32 +190,37 @@ namespace TSEspionage
                     return;
                 }
 
-                var gcHandle = GCHandle.Alloc((object)new byte[RegionScoreStateSize], GCHandleType.Pinned);
-                var ptr = gcHandle.AddrOfPinnedObject();
-                if (TwilightLib.GetGameFinalScoreState(true, ptr, RegionScoreStateSize) != 0)
-                {
-                    var scoreState = (GameFinalScoreState)Marshal.PtrToStructure(ptr, typeof(GameFinalScoreState));
+                var scoreState = TwilightLibWrapper.GetGameFinalScoreState();
 
-                    var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
-                    _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
+                var middleEastScoreState = scoreState.region[(int)RegionId.MiddleEast];
+                _middleEastRegionControlBar.HandleRegionScore(middleEastScoreState);
 
-                    var asiaScoreState = scoreState.region[(int)RegionId.Asia];
-                    _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
-                }
-
-                gcHandle.Free();
+                var asiaScoreState = scoreState.region[(int)RegionId.Asia];
+                _asiaRegionControlBar.HandleRegionScore(asiaScoreState);
             }
         }
 
         /**
          * Listen to game events
          */
-        [HarmonyPatch(typeof(TwilightStruggle), "HandleEvent")]
+        [HarmonyPatch(typeof(TwilightStruggle), nameof(TwilightStruggle.HandleEvent))]
         public static class HandleEventPatch
         {
-            public static void Prefix(ref IntPtr eventBuffer)
+            public static void Postfix(ref IntPtr eventBuffer)
             {
                 _gameEventHandler.HandleEvent(ref eventBuffer);
+            }
+        }
+
+        /**
+         * Listen for the Undo button being pressed
+         */
+        [HarmonyPatch(typeof(TwilightStruggle), nameof(TwilightStruggle.OnActionConfirmButtonUndoPressed))]
+        public static class OnActionConfirmButtonUndoPressedPatch
+        {
+            public static void Postfix()
+            {
+                _cardCountManager.UpdateCardCounts();
             }
         }
     }
