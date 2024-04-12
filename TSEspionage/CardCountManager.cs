@@ -76,7 +76,17 @@ namespace TSEspionage
 
         public void UpdateCardCounts()
         {
-            var players = GetPlayers();
+            var localPlayerId = TwilightLibWrapper.GetPlayerId();
+            var opposingPlayerId = TwilightLibWrapper.GetOpponentId();
+            var superpowers = TwilightLibWrapper.GetSuperpowers(localPlayerId);
+            
+            var players = new Players(localPlayerId, opposingPlayerId, superpowers[localPlayerId],
+                superpowers[opposingPlayerId]);
+            if (players.LocalSuperpower == EPlayer.NONE || players.OpposingSuperpower == EPlayer.NONE)
+            {
+                // Players have not yet been assigned sides
+                return;
+            }
 
             var usaHandState = TwilightLibWrapper.GetHand(players.GetUsaPlayerId());
             var ussrHandState = TwilightLibWrapper.GetHand(players.GetUssrPlayerId());
