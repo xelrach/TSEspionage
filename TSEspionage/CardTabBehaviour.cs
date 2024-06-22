@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -15,7 +16,9 @@ namespace TSEspionage
      */
     public class CardTabBehaviour : MonoBehaviour
     {
-        private const float TabOffset = 37;
+        private const int CameraOffset = 37;
+        private const int TabShrink = 6;
+        private const int TabShrinkOffset = TabShrink / 2;
 
         private CardCountManager _cardCountManager;
 
@@ -34,20 +37,35 @@ namespace TSEspionage
         {
             _cardCountManager = cardCountManager;
 
-            // Move the card tabs
+            // Shrink and move the card tabs
             var handTab = cardTray.Find("HandTab");
-            handTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            handTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(CameraOffset + TabShrinkOffset, 0);
+            handTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
+
             var discardTab = cardTray.Find("DiscardTab");
-            discardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            discardTab.GetComponent<RectTransform>().anchoredPosition -=
+                new Vector2(CameraOffset + (3 * TabShrinkOffset), 0);
+            discardTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
+
             var removedTab = cardTray.Find("RemovedTab");
-            removedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            removedTab.GetComponent<RectTransform>().anchoredPosition -=
+                new Vector2(CameraOffset + (5 * TabShrinkOffset), 0);
+            removedTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
 
             var activeHandTab = cardTray.Find("Hand Display").Find("HandTab");
-            activeHandTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            activeHandTab.GetComponent<RectTransform>().anchoredPosition -=
+                new Vector2(CameraOffset + TabShrinkOffset, 0);
+            activeHandTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
+
             var activeDiscardTab = cardTray.Find("Discard Display").Find("DiscardTab");
-            activeDiscardTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            activeDiscardTab.GetComponent<RectTransform>().anchoredPosition -=
+                new Vector2(CameraOffset + (3 * TabShrinkOffset), 0);
+            activeDiscardTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
+
             var activeRemovedTab = cardTray.Find("Removed Display").Find("RemovedTab");
-            activeRemovedTab.GetComponent<RectTransform>().anchoredPosition -= new Vector2(TabOffset, 0);
+            activeRemovedTab.GetComponent<RectTransform>().anchoredPosition -=
+                new Vector2(CameraOffset + (5 * TabShrinkOffset), 0);
+            activeRemovedTab.GetComponent<RectTransform>().sizeDelta -= new Vector2(TabShrink, 0);
 
             // Add handler for card counts
             _playerHandTmp = handTab.Find("HandTab (TMP)").GetComponent<TextMeshProUGUI>();
@@ -58,6 +76,13 @@ namespace TSEspionage
             _discardedPileActiveTmp = activeDiscardTab.Find("Discard (TMP)").GetComponent<TextMeshProUGUI>();
             _removedPileActiveTmp = activeRemovedTab.Find("Removed (TMP)").GetComponent<TextMeshProUGUI>();
 
+            // Rename the Player Hand tab
+            if (string.Equals(_playerHandTmp.text, "Player Hand", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _playerHandTmp.text = "Player";
+            }
+
+            // Store the existing tab text
             _origPlayerHandText = _playerHandTmp.text;
             _origDiscardPileText = _discardedPileTmp.text;
             _origRemovedPileText = _removedPileTmp.text;
@@ -91,6 +116,7 @@ namespace TSEspionage
                 opponentCount = cardCounts.UsaHandCount;
             }
 
+            // TODO: Decide to display China Card or not
             var playerChina = "";
             var opponentChina = "";
             if (cardCounts.Players.LocalSuperpower == cardCounts.ChinaCardHolder)
@@ -102,7 +128,7 @@ namespace TSEspionage
                 opponentChina = cardCounts.ChinaCardFaceUp ? " + C" : " - C";
             }
 
-            var playerText = $"{_origPlayerHandText} ({playerCount}{playerChina})";
+            var playerText = $"{_origPlayerHandText} ({playerCount})";
             _playerHandTmp.text = playerText;
             _playerHandActiveTmp.text = playerText;
 
