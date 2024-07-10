@@ -4,9 +4,11 @@ TSEspionage is a mod for the Playdek Twilight Struggle client. This mod adds var
 
 ## Installation (Windows)
 
-First you will need to find your Twilight Struggle install folder. Open Steam and right click on "Twilight Struggle", then click on "Properties...", next click on "Local Files", finally click "Browse...". This will open the folder that Twilight Struggle is installed into.
+First you will need to find your Twilight Struggle install folder. Open Steam and right click on "Twilight Struggle", then click on "Properties...", next click on "Installed Files", finally click "Browse...". This will open the folder that Twilight Struggle is installed into.
 
 Next download the latest version of the mod for Windows. Open the ZIP file. Extract the contents of the ZIP file directly into the Twilight Struggle install directory. You should now have a directory called "TSEspionage" in the same place as the "TwlightStruggle" executable.
+
+![Twilight Struggle Folder](https://github.com/xelrach/TSEspionage/blob/main/docs/Twilight_Struggle_Folder.png?raw=true)
 
 ## Uninstall (Windows)
 
