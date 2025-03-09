@@ -17,10 +17,14 @@ Remove doorstop_config.ini, .doorstop_version, winhttp.dll, and TSEspionage from
 ## Development
 
 If you would like to develop TSEspionage there are a few steps to get set-up:
+* Install the .NET SDK by opening a shell and running:
+```
+  winget install "Microsoft.DotNet.SDK.3_1"
+```
+* Download and install the developer pack from https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net451-developer-pack-offline-installer
 * TSEspionage is a C# project, so you will likely want to install an IDE that supports C#.
 * Use git to clone the repository.
 * Open the git directory in your IDE
-* NuGet will need to run (probably will be run automatically by your IDE)
+* Let your IDE run NuGet
 * Open TSEspionage/TSEspionage.csproj. This file contains a list of "Reference"s. These are DLLs that we need to copy from the Twilight Struggle client.
-* Open Twilight Struggle's install directory and then the "TwilightStruggle_Data/Managed" directory.
-* Copy all the files from the list into your repository's "TSEspionage/resources/Third Party" directory.
+* Open Twilight Struggle's install directory and then the "TwilightStruggle_Data/Managed" directory and copy all the files from the references list into your repository's "TSEspionage/resources/Third Party" directory.

@@ -32,19 +32,16 @@ namespace TSEspionage
         [HarmonyPatch(typeof(GameLog), nameof(GameLog.UpdateGameLog))]
         public static class UpdateGameLogPatch
         {
-            public static void Prefix(GameLog __instance, out GameLogEntry[] __state)
+            public static void Postfix(GameLog __instance)
             {
-                __state = LogItemListRef(__instance).Select(item => new GameLogEntry
+                var entries = LogItemListRef(__instance).Select(item => new GameLogEntry
                 {
                     name = item.m_LogItemName.text,
                     desc = item.m_LogItemDesc.text,
                     detail = item.m_LogItemDetail.text
                 }).ToArray();
-            }
 
-            public static void Postfix(GameLogEntry[] __state)
-            {
-                if (__state.Length == 0)
+                if (entries.Length == 0)
                 {
                     return;
                 }
@@ -52,7 +49,7 @@ namespace TSEspionage
                 var gameId = TwilightLibWrapper.GetCurrentGameId();
                 try
                 {
-                    _gameLogWriter.Write(gameId, __state);
+                    _gameLogWriter.Write(gameId, entries);
                 }
                 catch (Exception e)
                 {

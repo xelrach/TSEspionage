@@ -15,7 +15,7 @@ namespace TSEspionage
      */
     public class CardCounts
     {
-        public readonly Players Players;
+        public readonly TwilightLibWrapper.Players Players;
         public readonly EPlayer ChinaCardHolder;
         public readonly bool ChinaCardFaceUp;
         public readonly ushort UsaHandCount;
@@ -24,7 +24,7 @@ namespace TSEspionage
         public readonly ushort DiscardPileCount;
         public readonly ushort RemovedPileCount;
 
-        private CardCounts(Players players, EPlayer chinaCardHolder, bool chinaCardFaceUp, ushort usaHandCount,
+        private CardCounts(TwilightLibWrapper.Players players, EPlayer chinaCardHolder, bool chinaCardFaceUp, ushort usaHandCount,
             ushort ussrHandCount, ushort drawPileCount, ushort discardPileCount, ushort removedPileCount)
         {
             Players = players;
@@ -39,7 +39,7 @@ namespace TSEspionage
 
         public class Builder
         {
-            public Players Players;
+            public TwilightLibWrapper.Players Players;
             public EPlayer ChinaCardHolder = EPlayer.NONE;
             public bool ChinaCardFaceUp;
             public ushort UsaHandCount;
@@ -64,24 +64,9 @@ namespace TSEspionage
     {
         private readonly UnityEvent<CardCounts> _eventTrigger = new UnityEvent<CardCounts>();
 
-        private static Players GetPlayers()
-        {
-            var localPlayerId = TwilightLibWrapper.GetPlayerId();
-            var opposingPlayerId = TwilightLibWrapper.GetOpponentId();
-            var superpowers = TwilightLibWrapper.GetSuperpowers(localPlayerId);
-
-            return new Players(localPlayerId, opposingPlayerId, superpowers[localPlayerId],
-                superpowers[opposingPlayerId]);
-        }
-
         public void UpdateCardCounts()
         {
-            var localPlayerId = TwilightLibWrapper.GetPlayerId();
-            var opposingPlayerId = TwilightLibWrapper.GetOpponentId();
-            var superpowers = TwilightLibWrapper.GetSuperpowers(localPlayerId);
-            
-            var players = new Players(localPlayerId, opposingPlayerId, superpowers[localPlayerId],
-                superpowers[opposingPlayerId]);
+            var players = TwilightLibWrapper.GetPlayers();
             if (players.LocalSuperpower == EPlayer.NONE || players.OpposingSuperpower == EPlayer.NONE)
             {
                 // Players have not yet been assigned sides
@@ -136,52 +121,6 @@ namespace TSEspionage
         public void RemoveListener(UnityAction<CardCounts> callback)
         {
             _eventTrigger.RemoveListener(callback);
-        }
-    }
-
-    public class Players
-    {
-        public readonly int LocalPlayerId;
-        public readonly int OpposingPlayerId;
-        public readonly EPlayer LocalSuperpower;
-        public readonly EPlayer OpposingSuperpower;
-
-        public Players(int localPlayerId, int opposingPlayerId, EPlayer localSuperpower, EPlayer opposingSuperpower)
-        {
-            LocalPlayerId = localPlayerId;
-            OpposingPlayerId = opposingPlayerId;
-            LocalSuperpower = localSuperpower;
-            OpposingSuperpower = opposingSuperpower;
-        }
-
-        public int GetUsaPlayerId()
-        {
-            if (LocalSuperpower == EPlayer.US)
-            {
-                return LocalPlayerId;
-            }
-
-            if (OpposingSuperpower == EPlayer.US)
-            {
-                return OpposingPlayerId;
-            }
-
-            throw new InvalidOperationException();
-        }
-
-        public int GetUssrPlayerId()
-        {
-            if (LocalSuperpower == EPlayer.USSR)
-            {
-                return LocalPlayerId;
-            }
-
-            if (OpposingSuperpower == EPlayer.USSR)
-            {
-                return OpposingPlayerId;
-            }
-
-            throw new InvalidOperationException();
         }
     }
 }

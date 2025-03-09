@@ -4,6 +4,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GameData;
@@ -104,6 +105,77 @@ namespace TSEspionage
             {
                 handle.Free();
             }
+        }
+
+        public class Players
+        {
+            public readonly int LocalPlayerId;
+            public readonly int OpposingPlayerId;
+            public readonly EPlayer LocalSuperpower;
+            public readonly EPlayer OpposingSuperpower;
+
+            public Players(int localPlayerId, int opposingPlayerId, EPlayer localSuperpower, EPlayer opposingSuperpower)
+            {
+                LocalPlayerId = localPlayerId;
+                OpposingPlayerId = opposingPlayerId;
+                LocalSuperpower = localSuperpower;
+                OpposingSuperpower = opposingSuperpower;
+            }
+
+            public int GetUsaPlayerId()
+            {
+                if (LocalSuperpower == EPlayer.US)
+                {
+                    return LocalPlayerId;
+                }
+
+                if (OpposingSuperpower == EPlayer.US)
+                {
+                    return OpposingPlayerId;
+                }
+
+                throw new InvalidOperationException();
+            }
+
+            public int GetUssrPlayerId()
+            {
+                if (LocalSuperpower == EPlayer.USSR)
+                {
+                    return LocalPlayerId;
+                }
+
+                if (OpposingSuperpower == EPlayer.USSR)
+                {
+                    return OpposingPlayerId;
+                }
+
+                throw new InvalidOperationException();
+            }
+
+            public EPlayer GetSuperpowerForPlayerId(int playerId)
+            {
+                if (playerId == LocalPlayerId)
+                {
+                    return LocalSuperpower;
+                }
+
+                if (playerId == OpposingPlayerId)
+                {
+                    return OpposingSuperpower;
+                }
+
+                throw new InvalidOperationException();
+            }
+        }
+
+        public static Players GetPlayers()
+        {
+            var localPlayerId = GetPlayerId();
+            var opposingPlayerId = GetOpponentId();
+            var superpowers = GetSuperpowers(localPlayerId);
+
+            return new Players(localPlayerId, opposingPlayerId, superpowers[localPlayerId],
+                superpowers[opposingPlayerId]);
         }
 
         private static IEnumerable<int> GetInstanceList(int playerId, int instanceType, int maxEvents)
